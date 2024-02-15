@@ -1,0 +1,13 @@
+Options +FollowSymlinks
+IndexIgnore */*
+
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+
+    # Se um diretório ou arquivo real for solicitado, encaminhe-o diretamente
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Caso contrário, encaminhe a solicitação para index.php
+    RewriteRule . index.php
+</IfModule>
