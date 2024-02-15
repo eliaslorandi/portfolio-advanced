@@ -58,7 +58,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ProjectImages]].
      *
-     * @return \yii\db\ActiveQuery|ProjectImageQuery
+     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
      */
     public function getProjectImages()
     {
@@ -68,7 +68,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Testimonials]].
      *
-     * @return \yii\db\ActiveQuery|TestimonialQuery
+     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
      */
     public function getTestimonials()
     {
