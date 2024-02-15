@@ -17,8 +17,8 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'start_date', 'end_date'], 'integer'],
-            [['name', 'tech_stack', 'description'], 'safe'],
+            [['id'], 'integer'],
+            [['name', 'tech_stack', 'description', 'start_date', 'end_date'], 'safe'],
         ];
     }
 

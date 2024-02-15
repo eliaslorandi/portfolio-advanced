@@ -9,5 +9,8 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'formatter' => [
+            'dateFormat' => 'yyyy-MM-dd',
+        ]
     ],
 ];
