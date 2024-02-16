@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\editors\Summernote;
 
 /** @var yii\web\View $this */
 /** @var common\models\Project $model */
@@ -14,7 +15,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'tech_stack')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'tech_stack')->widget(Summernote::class, [
+    'useKrajeePresets' => true,
+    // other widget settings
+    ]); 
+    ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
