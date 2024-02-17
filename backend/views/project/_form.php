@@ -31,6 +31,8 @@ use kartik\editors\Summernote;
         //'language' => 'pt-BR' 
     ]) ?>
 
+    <?= $form->field($model, 'imageFile')->fileInput() ?>
+
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>

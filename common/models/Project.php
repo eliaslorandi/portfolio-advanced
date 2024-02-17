@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "project".
@@ -17,8 +20,13 @@ use Yii;
  * @property ProjectImage[] $projectImages
  * @property Testimonial[] $testimonials
  */
-class Project extends \yii\db\ActiveRecord
+class Project extends ActiveRecord
 {
+    /**
+     * @var UploadedFile
+     */
+    public $imageFile;
+
     /**
      * {@inheritdoc}
      */
@@ -37,6 +45,7 @@ class Project extends \yii\db\ActiveRecord
             [['tech_stack', 'description'], 'string'],
             [['start_date', 'end_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -58,7 +67,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * Gets query for [[ProjectImages]].
      *
-     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
+     * @return ActiveQuery|ActiveQuery
      */
     public function getProjectImages()
     {
@@ -68,7 +77,7 @@ class Project extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Testimonials]].
      *
-     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
+     * @return ActiveQuery|ActiveQuery
      */
     public function getTestimonials()
     {
@@ -82,5 +91,36 @@ class Project extends \yii\db\ActiveRecord
     public static function find()
     {
         return new ProjectQuery(get_called_class());
+    }
+
+    public function saveImage()
+    {
+        Yii::$app->db->transaction(function ($db) {
+            /**
+             * @var $db \yii\db\Connection
+             */
+            //primeira etapa: criar registro na tabela file
+            $file = new File();
+            $file->name = uniqid(true) . '.' . $this->imageFile->extension;
+            $file->base_url = Yii::$app->urlManager->createAbsoluteUrl('uploads/projects');
+            $file->mime_type = mime_content_type($this->imageFile->tempName);
+            $file->save();
+
+            //segunda etapa: criar registro na tabela project_image
+            $projectImage = new ProjectImage();
+            $projectImage->project_id = $this->id;
+            $projectImage->file_id = $file->id;
+            $projectImage->save();
+
+            //terceira etapa: salvar a imagem no diretório da web
+            if (!$this->imageFile->saveAs(Yii::$app->params['uploads']['projects'] . '/' . $file->name)) {
+                $db->transaction->rollBack();
+            }
+        });
+    }
+
+    public function hasImages() //verifica se o projeto possui imagem
+    {
+        return count($this->projectImages) > 0;
     }
 }

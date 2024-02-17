@@ -16,7 +16,7 @@ class m231111_171702_create_file_table extends Migration
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
             'base_url' => $this->string()->notNull(),
-            'mine_type' => $this->string()->notNull(),
+            'mime_type' => $this->string()->notNull(),
         ]);
     }
 
