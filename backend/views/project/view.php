@@ -44,14 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                     // Variável vazia para armazenar o HTML que conterá as tags da imagem
                     $imagesHtml = "";
-                    foreach ($model->getProjectImages()->all() as $projectImage) {
-                        $imagesHtml .= Html::img($projectImage->file->absoluteUrl(), [
+                    foreach ($model->projectImages as $image) {
+                        $imagesHtml .= Html::img($image->file->AbsoluteUrl(), [
                             'alt' => 'Image demonstration',
-                            'height' => 200,
-                        ]);
+                            'height' => '200',
+                            'class' => 'project-view__image'
+                        ]); //base_url . '/' . $image->file->name);
                     }
                     return $imagesHtml;
-                    
                 }
             ],
             'tech_stack:raw',
