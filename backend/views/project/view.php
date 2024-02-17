@@ -31,6 +31,29 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
+            [
+                //exibir as imagens do projeto
+                'label' => Yii::t('app', 'Images'),
+                'format' => 'raw',
+                'value' => function ($model) {
+                    /**
+                     * @var $model common\models\Project
+                     */
+                    if (!$model->hasImages()) {
+                        return null;
+                    }
+                    // Variável vazia para armazenar o HTML que conterá as tags da imagem
+                    $imagesHtml = "";
+                    foreach ($model->getProjectImages()->all() as $projectImage) {
+                        $imagesHtml .= Html::img($projectImage->file->absoluteUrl(), [
+                            'alt' => 'Image demonstration',
+                            'height' => 200,
+                        ]);
+                    }
+                    return $imagesHtml;
+                    
+                }
+            ],
             'tech_stack:raw',
             'description:ntext',
             'start_date',

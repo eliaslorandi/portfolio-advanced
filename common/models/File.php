@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $base_url
- * @property string $mine_type
+ * @property string $mime_type
  *
  * @property ProjectImage[] $projectImages
  * @property Testimonial[] $testimonials
@@ -31,8 +31,8 @@ class File extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'base_url', 'mine_type'], 'required'],
-            [['name', 'base_url', 'mine_type'], 'string', 'max' => 255],
+            [['name', 'base_url', 'mime_type'], 'required'],
+            [['name', 'base_url', 'mime_type'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,7 +45,7 @@ class File extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
             'base_url' => Yii::t('app', 'Base Url'),
-            'mine_type' => Yii::t('app', 'Mine Type'),
+            'mime_type' => Yii::t('app', 'Mime Type'),
         ];
     }
 
@@ -67,5 +67,10 @@ class File extends \yii\db\ActiveRecord
     public function getTestimonials()
     {
         return $this->hasMany(Testimonial::class, ['customer_image_id' => 'id']);
+    }
+
+    public function absoluteUrl()
+    {
+        return $this->base_url . '/' . $this->name;
     }
 }
