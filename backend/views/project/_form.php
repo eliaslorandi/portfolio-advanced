@@ -16,9 +16,9 @@ use kartik\editors\Summernote;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'tech_stack')->widget(Summernote::class, [
-    'useKrajeePresets' => true,
-    // other widget settings
-    ]); 
+        'useKrajeePresets' => true,
+        // other widget settings
+    ]);
     ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
@@ -30,6 +30,14 @@ use kartik\editors\Summernote;
     <?= $form->field($model, 'end_date')->widget(\yii\jui\DatePicker::class, [
         //'language' => 'pt-BR' 
     ]) ?>
+
+    <?php foreach ($model->projectImages as $image) : ?>
+        <?= Html::img($image->file->absoluteUrl(), [
+            'alt' => 'Image demonstration',
+            'height' => 200,
+            'class' => 'project-form__image'
+        ]) ?>
+    <?php endforeach; ?>
 
     <?= $form->field($model, 'imageFile')->fileInput() ?>
 
