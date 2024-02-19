@@ -132,11 +132,14 @@ class ProjectController extends Controller
 
     public function actionDeleteProjectImage()
     {
-        $image = ProjectImage::findOne($this->request->post('id'));
+        $image = ProjectImage::findOne($this->request->post('key')); //altedado de 'id' para 'key' pois é o atributo no plugin
         if (!$image) {
             throw new NotFoundHttpException();
         }
-        $image->file->delete();
+        if($image->file->delete()){
+            return json_encode(null);
+        }
+        return json_encode(['error' => true]);
     }
 
     /**

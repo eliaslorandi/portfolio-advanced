@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
@@ -44,6 +45,8 @@ $this->registerJsFile(
             'initialPreview' => $model->imageAbsoluteUrls(),
             'initialPreviewAsData' => true,
             'showUpload' => false, //removido pois a imagem só deve ser carregada qunado o form for submetido
+            'deleteUrl' => Url::to(['project/delete-project-image']), //metodo de projectcontroller
+            'initialPreviewConfig' => $model->imageConfigs(),
         ]
     ]); ?>
 

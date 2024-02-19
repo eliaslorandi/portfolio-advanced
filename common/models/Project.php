@@ -134,4 +134,15 @@ class Project extends ActiveRecord
         }
         return $urls;
     }
+
+    public function imageConfigs()
+    {
+        $configs = [];
+        foreach ($this->projectImages as $image) {
+            $configs[] = [
+                'key' => $image->id,
+            ];
+        }
+        return $configs;
+    }
 }
