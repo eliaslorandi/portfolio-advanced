@@ -8,6 +8,7 @@ use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use common\models\Project;
+use common\models\ProjectImage;
 use backend\models\ProjectSearch;
 
 /**
@@ -27,6 +28,7 @@ class ProjectController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'delete-project-image' => ['POST'],
                     ],
                 ],
             ]
@@ -126,6 +128,18 @@ class ProjectController extends Controller
         Yii::$app->session->setFlash('success', 'Successfully deleted.');
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteProjectImage()
+    {
+        $image = ProjectImage::findOne($this->request->post('key')); //altedado de 'id' para 'key' pois é o atributo no plugin
+        if (!$image) {
+            throw new NotFoundHttpException();
+        }
+        if($image->file->delete()){
+            return json_encode(null);
+        }
+        return json_encode(['error' => true]);
     }
 
     /**

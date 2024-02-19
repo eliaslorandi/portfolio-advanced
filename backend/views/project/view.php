@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     // Variável vazia para armazenar o HTML que conterá as tags da imagem
                     $imagesHtml = "";
                     foreach ($model->projectImages as $image) {
-                        $imagesHtml .= Html::img($image->file->AbsoluteUrl(), [
+                        $imagesHtml .= Html::img($image->file->absoluteUrl(), [
                             'alt' => 'Image demonstration',
                             'height' => '200',
                             'class' => 'project-view__image'

@@ -1,12 +1,20 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\file\FileInput;
 use kartik\editors\Summernote;
 
 /** @var yii\web\View $this */
-/** @var common\models\Project $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var common\models\Project $model */
+
+$this->registerJsFile(
+    '@web/js/projectForm.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+);
+
 ?>
 
 <div class="project-form">
@@ -31,15 +39,16 @@ use kartik\editors\Summernote;
         //'language' => 'pt-BR' 
     ]) ?>
 
-    <?php foreach ($model->projectImages as $image) : ?>
-        <?= Html::img($image->file->absoluteUrl(), [
-            'alt' => 'Image demonstration',
-            'height' => 200,
-            'class' => 'project-form__image'
-        ]) ?>
-    <?php endforeach; ?>
-
-    <?= $form->field($model, 'imageFile')->fileInput() ?>
+    <?= $form->field($model, 'imageFile')->widget(FileInput::class, [ //'imageFile' é um atributo de model/project
+        'options' => ['accept' => 'image/*'],
+        'pluginOptions' => [
+            'initialPreview' => $model->imageAbsoluteUrls(),
+            'initialPreviewAsData' => true,
+            'showUpload' => false, //removido pois a imagem só deve ser carregada qunado o form for submetido
+            'deleteUrl' => Url::to(['project/delete-project-image']), //metodo de projectcontroller
+            'initialPreviewConfig' => $model->imageConfigs(),
+        ]
+    ]); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
