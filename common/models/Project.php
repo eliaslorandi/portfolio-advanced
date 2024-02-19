@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
+use yii\helpers\FileHelper;
 
 /**
  * This is the model class for table "project".
@@ -102,8 +103,9 @@ class Project extends ActiveRecord
             //primeira etapa: criar registro na tabela file
             $file = new File();
             $file->name = uniqid(true) . '.' . $this->imageFile->extension;
-            $file->base_url = Yii::$app->urlManager->createAbsoluteUrl('uploads/projects');
-            $file->mime_type = mime_content_type($this->imageFile->tempName);
+            $file->path_url = Yii::$app->params['uploads']['projects'];
+            $file->base_url = Yii::$app->urlManager->createAbsoluteUrl($file->path_url);
+            $file->mime_type = FileHelper::getMimeType($this->imageFile->tempName);
             $file->save();
 
             //segunda etapa: criar registro na tabela project_image
