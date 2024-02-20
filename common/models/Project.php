@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\imagine\Image;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
@@ -26,7 +27,7 @@ class Project extends ActiveRecord
     /**
      * @var UploadedFile
      */
-    public $imageFile;
+    public $imageFiles;
 
     /**
      * {@inheritdoc}
@@ -46,7 +47,7 @@ class Project extends ActiveRecord
             [['tech_stack', 'description'], 'string'],
             [['start_date', 'end_date'], 'safe'],
             [['name'], 'string', 'max' => 255],
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg'],
+            [['imageFiles'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg', 'maxFiles' => 10], //0 = limitado diretiva php = 20
         ];
     }
 
@@ -94,29 +95,39 @@ class Project extends ActiveRecord
         return new ProjectQuery(get_called_class());
     }
 
-    public function saveImage()
+    public function saveImages()
     {
         Yii::$app->db->transaction(function ($db) {
             /**
              * @var $db \yii\db\Connection
              */
-            //primeira etapa: criar registro na tabela file
-            $file = new File();
-            $file->name = uniqid(true) . '.' . $this->imageFile->extension;
-            $file->path_url = Yii::$app->params['uploads']['projects'];
-            $file->base_url = Yii::$app->urlManager->createAbsoluteUrl($file->path_url);
-            $file->mime_type = FileHelper::getMimeType($this->imageFile->tempName);
-            $file->save();
+            foreach ($this->imageFiles as $imageFile) {
+                /**
+                 * @var $imageFile UploadedFile
+                 */
+                //primeira etapa: criar registro na tabela file
+                $file = new File();
+                $file->name = uniqid(true) . '.' . $imageFile->extension;
+                $file->path_url = Yii::$app->params['uploads']['projects'];
+                $file->base_url = Yii::$app->urlManager->createAbsoluteUrl($file->path_url);
+                //$file->mime_type = FileHelper::getMimeType($imageFile->tempName);
+                $file->mime_type = mime_content_type($imageFile->tempName);
+                $file->save();
 
-            //segunda etapa: criar registro na tabela project_image
-            $projectImage = new ProjectImage();
-            $projectImage->project_id = $this->id;
-            $projectImage->file_id = $file->id;
-            $projectImage->save();
+                //segunda etapa: criar registro na tabela project_image
+                $projectImage = new ProjectImage();
+                $projectImage->project_id = $this->id;
+                $projectImage->file_id = $file->id;
+                $projectImage->save();
 
-            //terceira etapa: salvar a imagem no diretório da web
-            if (!$this->imageFile->saveAs(Yii::$app->params['uploads']['projects'] . '/' . $file->name)) {
-                $db->transaction->rollBack();
+                //ajustar tamanho da imagem
+                $thumbnail = Image::thumbnail($imageFile->tempName, null, 1080);
+                $didSave = $thumbnail->save($file->path_url . '/' . $file->name);
+
+                //terceira etapa: salvar a imagem no diretório da web
+                if (!$didSave) {
+                    $db->transaction->rollBack();
+                }
             }
         });
     }
@@ -144,5 +155,10 @@ class Project extends ActiveRecord
             ];
         }
         return $configs;
+    }
+
+    public function loadUploadedImageFiles()
+    {
+        $this->imageFiles = UploadedFile::getInstances($this, 'imageFiles');
     }
 }

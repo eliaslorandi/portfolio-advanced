@@ -39,8 +39,8 @@ $this->registerJsFile(
         //'language' => 'pt-BR' 
     ]) ?>
 
-    <?= $form->field($model, 'imageFile')->widget(FileInput::class, [ //'imageFile' é um atributo de model/project
-        'options' => ['accept' => 'image/*'],
+    <?= $form->field($model, 'imageFiles[]')->widget(FileInput::class, [ //'imageFile' é um atributo de model/project
+        'options' => ['accept' => 'image/*', 'multiple' => true],
         'pluginOptions' => [
             'initialPreview' => $model->imageAbsoluteUrls(),
             'initialPreviewAsData' => true,
