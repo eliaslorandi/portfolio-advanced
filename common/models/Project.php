@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\imagine\Image;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
@@ -119,8 +120,12 @@ class Project extends ActiveRecord
                 $projectImage->file_id = $file->id;
                 $projectImage->save();
 
+                //ajustar tamanho da imagem
+                $thumbnail = Image::thumbnail($imageFile->tempName, null, 1080);
+                $didSave = $thumbnail->save($file->path_url . '/' . $file->name);
+
                 //terceira etapa: salvar a imagem no diretório da web
-                if (!$imageFile->saveAs($file->path_url . '/' . $file->name)) {
+                if (!$didSave) {
                     $db->transaction->rollBack();
                 }
             }
