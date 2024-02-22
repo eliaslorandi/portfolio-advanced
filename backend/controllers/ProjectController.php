@@ -83,11 +83,13 @@ class ProjectController extends Controller
                 }
             }
         } else {
+            $model->project_id = $this->request->get('project_id');
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'projects' => $this->loadProjects(),
         ]);
     }
 
