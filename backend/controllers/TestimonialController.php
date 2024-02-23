@@ -3,12 +3,13 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\File;
 use yii\web\Controller;
+use common\models\Project;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\NotFoundHttpException;
-use common\models\Project;
 use common\models\Testimonial;
+use yii\web\NotFoundHttpException;
 use backend\models\TestimonialSearch;
 
 /**
@@ -124,6 +125,15 @@ class TestimonialController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteCustomerImage() //testimonial.php metodo imageConfig
+    {
+        $file = File::findOne($this->request->post('key'));
+        if($file->delete()){
+            return json_encode(null);
+        }
+        return json_encode(['error' => true]);
     }
 
     /**
